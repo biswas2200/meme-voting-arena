@@ -1,0 +1,58 @@
+{
+  "name": "meme-arena-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.5.2",
+    "axios": "^1.9.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.12.1",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "^7.15.0",
+    "socket.io-client": "^4.8.3",
+    "sockjs-client": "^1.6.1",
+    "web-vitals": "^4.2.4"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8080",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@vitejs/plugin-react": "^4.7.0",
+    "browserslist": "^4.28.2",
+    "cross-env": "^10.1.0",
+    "happy-dom": "^20.9.0",
+    "jsdom": "^27.0.1",
+    "vite": "^6.4.2",
+    "vitest": "^4.1.5"
+  }
+}

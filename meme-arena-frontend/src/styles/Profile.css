@@ -1,0 +1,374 @@
+/* ── Loading ─────────────────────────────────────────────── */
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.25rem;
+  color: rgba(0, 204, 255, 0.7);
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 1rem;
+}
+.profile-loader-icon { color: var(--primary-blue, #00ccff); }
+
+/* ── Hero card ───────────────────────────────────────────── */
+.profile-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  background: linear-gradient(135deg, rgba(0, 204, 255, 0.06) 0%, rgba(0, 100, 180, 0.04) 100%);
+  border: 1px solid rgba(0, 204, 255, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(0, 204, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Avatar ──────────────────────────────────────────────── */
+.profile-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 204, 255, 0.15), rgba(0, 100, 200, 0.2));
+  border: 2px solid var(--primary-blue, #00ccff);
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--primary-blue, #00ccff);
+}
+.profile-role-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+}
+.profile-role-badge.user {
+  background: rgba(0, 204, 255, 0.12);
+  border: 1px solid rgba(0, 204, 255, 0.3);
+  color: var(--primary-blue, #00ccff);
+}
+.profile-role-badge.admin {
+  background: rgba(255, 200, 0, 0.12);
+  border: 1px solid rgba(255, 200, 0, 0.4);
+  color: #ffc800;
+}
+
+/* ── Hero info ───────────────────────────────────────────── */
+.profile-hero-info { flex: 1; min-width: 0; }
+.profile-username {
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--primary-blue, #00ccff);
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.profile-email {
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 0.95rem;
+  color: rgba(0, 204, 255, 0.6);
+  margin: 0 0 0.9rem;
+}
+.profile-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.profile-keyword,
+.profile-joined {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 0.85rem;
+  color: rgba(0, 204, 255, 0.75);
+}
+.profile-keyword { font-weight: 700; color: var(--primary-blue, #00ccff); }
+
+/* ── Win-rate bar ────────────────────────────────────────── */
+.profile-winrate-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.winrate-label {
+  font-size: 0.78rem;
+  color: rgba(0, 204, 255, 0.6);
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.winrate-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 204, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.winrate-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ccff, #0088cc);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(0, 204, 255, 0.5);
+}
+.winrate-pct {
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-blue, #00ccff);
+  min-width: 38px;
+  text-align: right;
+}
+
+/* ── Stat cards grid ─────────────────────────────────────── */
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.profile-stat-card {
+  background: rgba(0, 204, 255, 0.04);
+  border: 1px solid rgba(0, 204, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.profile-stat-card:hover {
+  border-color: rgba(0, 204, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 204, 255, 0.1);
+}
+.profile-stat-card.accent {
+  border-color: rgba(0, 204, 255, 0.25);
+  background: rgba(0, 204, 255, 0.07);
+}
+.psc-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 204, 255, 0.1);
+  border-radius: 10px;
+  color: var(--primary-blue, #00ccff);
+  flex-shrink: 0;
+}
+.psc-body { display: flex; flex-direction: column; }
+.psc-value {
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-blue, #00ccff);
+  line-height: 1.1;
+}
+.psc-label {
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 0.75rem;
+  color: rgba(0, 204, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.15rem;
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.profile-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 204, 255, 0.15);
+  padding-bottom: 0;
+}
+.profile-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(0, 204, 255, 0.55);
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -1px;
+}
+.profile-tab:hover { color: var(--primary-blue, #00ccff); }
+.profile-tab.active {
+  color: var(--primary-blue, #00ccff);
+  border-bottom-color: var(--primary-blue, #00ccff);
+}
+
+/* ── Tab content ─────────────────────────────────────────── */
+.profile-tab-content { padding-bottom: 3rem; }
+
+.profile-section { margin-bottom: 2.5rem; }
+.profile-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-blue, #00ccff);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 1.25rem;
+}
+
+.profile-empty {
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  color: rgba(0, 204, 255, 0.45);
+  font-size: 0.95rem;
+  padding: 1.5rem 0;
+}
+
+/* ── Meme thumbnails ─────────────────────────────────────── */
+.profile-memes-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.profile-memes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.profile-meme-thumb {
+  position: relative;
+  background: rgba(0, 204, 255, 0.04);
+  border: 1px solid rgba(0, 204, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 180px;
+  flex-shrink: 0;
+}
+.profile-memes-grid .profile-meme-thumb { width: auto; }
+.profile-meme-thumb:hover {
+  border-color: rgba(0, 204, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 204, 255, 0.15);
+}
+.profile-meme-thumb img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+.thumb-rank {
+  position: absolute;
+  top: 6px; left: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--primary-blue, #00ccff);
+  font-family: var(--font-primary, 'Orbitron', sans-serif);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 204, 255, 0.3);
+}
+.thumb-info {
+  padding: 0.6rem 0.75rem;
+}
+.thumb-title {
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+  font-size: 0.82rem;
+  color: rgba(0, 204, 255, 0.85);
+  margin: 0 0 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.thumb-votes {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: rgba(0, 204, 255, 0.55);
+  font-family: var(--font-secondary, 'Rajdhani', sans-serif);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .profile-hero { flex-direction: column; align-items: center; text-align: center; }
+  .profile-meta-row { justify-content: center; }
+  .profile-winrate-bar { flex-wrap: wrap; }
+  .profile-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .profile-username { font-size: 1.4rem; }
+}
+@media (max-width: 400px) {
+  .profile-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Avatar uploader ─────────────────────────────────────── */
+.profile-avatar-clickable {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-blue, #00ccff);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.profile-avatar-clickable:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.spin-slow {
+  animation: spin 1.5s linear infinite;
+}

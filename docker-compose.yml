@@ -1,0 +1,85 @@
+# =============================================================
+# docker-compose.yml — LOCAL DEVELOPMENT
+#
+# Spins up:
+#   - PostgreSQL (replaces H2 so dev matches prod DB engine)
+#   - Spring Boot backend  (profile: docker-dev)
+#   - React frontend       (Vite/CRA dev server with hot-reload)
+#
+# Usage:
+#   cp .env.dev.example .env.dev
+#   docker compose --env-file .env.dev up --build
+#
+# The backend uses the 'docker-dev' Spring profile which connects
+# to the Postgres container instead of H2.
+# =============================================================
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: meme_arena_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-meme_arena}
+      POSTGRES_USER: ${POSTGRES_USER:-meme_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-meme_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-meme_user} -d ${POSTGRES_DB:-meme_arena}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Spring Boot Backend ─────────────────────────────────────
+  backend:
+    build:
+      context: ./gdg
+      dockerfile: Dockerfile
+    container_name: meme_arena_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker-dev
+      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-meme_arena}
+      DATABASE_USERNAME: ${POSTGRES_USER:-meme_user}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-meme_pass}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production_min_32_chars}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ORIGINS: http://localhost:3000
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persist uploaded files across container restarts in dev
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── React Frontend (dev server) ─────────────────────────────
+  frontend:
+    build:
+      context: ./meme-arena-frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:8080
+    container_name: meme_arena_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:
+  uploads_data:

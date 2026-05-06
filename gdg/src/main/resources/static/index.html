@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Voting Arena</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Loading Meme Arena...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🔥 Meme Arena</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active" data-page="home">Home</a>
+                <a href="#feed" class="nav-link" data-page="feed">Feed</a>
+                <a href="#leaderboard" class="nav-link" data-page="leaderboard">Leaderboard</a>
+                <a href="#battle" class="nav-link" data-page="battle">Battle</a>
+                <a href="#upload" class="nav-link" data-page="upload" id="upload-nav" style="display: none;">Upload</a>
+                <a href="#profile" class="nav-link" data-page="profile" id="profile-nav" style="display: none;">Profile</a>
+                <a href="#login" class="nav-link" data-page="login" id="login-nav">Login</a>
+                <button id="logout-btn" class="nav-link logout-btn" style="display: none;">Logout</button>
+            </div>
+            <div class="theme-toggle">
+                <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home-page" class="page active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome to Meme Arena</h1>
+                    <p id="welcome-message" class="hero-subtitle">Where the best memes rise to the top!</p>
+                    <div id="user-keyword" class="user-keyword"></div>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="navigateToPage('feed')">Explore Memes</button>
+                        <button class="btn btn-secondary" onclick="navigateToPage('battle')">Start Battle</button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <h3 id="total-memes">0</h3>
+                        <p>Total Memes</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="total-votes">0</h3>
+                        <p>Total Votes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feed Page -->
+        <section id="feed-page" class="page">
+            <div class="feed-header">
+                <h2>Meme Feed</h2>
+                <div class="feed-controls">
+                    <select id="sort-select" class="select-dropdown">
+                        <option value="votes">Sort by Votes</option>
+                        <option value="newest">Sort by Newest</option>
+                    </select>
+                </div>
+            </div>
+            <div id="memes-grid" class="memes-grid">
+                <!-- Memes will be loaded here -->
+            </div>
+            <div class="load-more-container">
+                <button id="load-more-btn" class="btn btn-secondary">Load More</button>
+            </div>
+        </section>
+
+        <!-- Leaderboard Page -->
+        <section id="leaderboard-page" class="page">
+            <div class="leaderboard-header">
+                <h2>🏆 Top Memes</h2>
+                <p>The cream of the crop!</p>
+            </div>
+            <div id="leaderboard-content" class="leaderboard-content">
+                <!-- Leaderboard will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Battle Page -->
+        <section id="battle-page" class="page">
+            <div class="battle-header">
+                <h2>⚔️ Meme Battle</h2>
+                <p>Choose your fighter!</p>
+            </div>
+            <div id="battle-arena" class="battle-arena">
+                <div class="battle-instruction">
+                    <p>Click on the meme you think is better!</p>
+                    <button id="start-battle-btn" class="btn btn-primary">Start Battle</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Page -->
+        <section id="upload-page" class="page">
+            <div class="upload-container">
+                <h2>Upload Your Meme</h2>
+                <form id="upload-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="meme-title">Meme Title</label>
+                        <input type="text" id="meme-title" name="title" required placeholder="Enter a catchy title...">
+                    </div>
+                    <div class="form-group">
+                        <label for="meme-url">Image URL</label>
+                        <input type="url" id="meme-url" name="imageUrl" required placeholder="https://example.com/meme.jpg">
+                    </div>
+                    <div class="form-group">
+                        <div class="image-preview" id="image-preview">
+                            <p>Image preview will appear here</p>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload Meme</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Profile Page -->
+        <section id="profile-page" class="page">
+            <div class="profile-container">
+                <div id="profile-content">
+                    <!-- Profile content will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Auth Pages -->
+        <section id="login-page" class="page">
+            <div class="auth-container">
+                <div class="auth-form">
+                    <h2>Login to Meme Arena</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-username">Username</label>
+                            <input type="text" id="login-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    <p class="auth-switch">
+                        Don't have an account? 
+                        <a href="#" onclick="navigateToPage('register')">Sign up here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="register-page" class="page">
+            <div class="auth-container">
+                <div class="auth-form">
+                    <h2>Join Meme Arena</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-username">Username</label>
+                            <input type="text" id="register-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                    <p class="auth-switch">
+                        Already have an account? 
+                        <a href="#" onclick="navigateToPage('login')">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

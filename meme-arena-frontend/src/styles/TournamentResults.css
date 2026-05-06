@@ -1,0 +1,576 @@
+/* TournamentResults Page Styles */
+
+/* ── Container ── */
+.tr-container {
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Loading ── */
+.tr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1.5rem;
+}
+
+.tr-loading-spinner {
+  width: 56px;
+  height: 56px;
+  border: 3px solid rgba(0, 204, 255, 0.15);
+  border-top-color: var(--primary-blue);
+  border-radius: 50%;
+}
+
+.tr-loading p {
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  color: rgba(0, 204, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+/* ── Error ── */
+.tr-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.tr-error-icon {
+  color: rgba(0, 204, 255, 0.5);
+}
+
+.tr-error h2 {
+  font-family: var(--font-primary);
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.tr-error p {
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  color: rgba(0, 204, 255, 0.7);
+  max-width: 420px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tr-error-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Page Header ── */
+.tr-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.tr-header-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tr-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.tr-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-primary);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ── Completed badge ── */
+.tr-completed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: rgba(0, 204, 255, 0.12);
+  border: 1px solid rgba(0, 204, 255, 0.4);
+  color: var(--primary-blue);
+}
+
+/* ── Metadata row ── */
+.tr-metadata {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  color: rgba(0, 204, 255, 0.6);
+}
+
+.tr-metadata-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tr-metadata-label {
+  color: rgba(0, 204, 255, 0.5);
+}
+
+.tr-metadata-value {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.tr-metadata-separator {
+  color: rgba(0, 204, 255, 0.3);
+}
+
+/* ── Champion Banner ── */
+.tr-champion-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2.5rem 2rem;
+  margin-bottom: 3rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 200, 0, 0.08),
+    rgba(0, 204, 255, 0.08)
+  );
+  border: 2px solid rgba(255, 200, 0, 0.4);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 0 30px rgba(255, 200, 0, 0.15),
+    0 0 60px rgba(0, 204, 255, 0.08);
+  text-align: center;
+}
+
+.tr-champion-crown {
+  color: #ffc800;
+  filter: drop-shadow(0 0 12px rgba(255, 200, 0, 0.7));
+  animation: trCrownPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes trCrownPulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 200, 0, 0.7)); }
+  50%       { filter: drop-shadow(0 0 20px rgba(255, 200, 0, 1)); }
+}
+
+.tr-champion-label {
+  font-family: var(--font-primary);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ffc800;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(255, 200, 0, 0.5);
+}
+
+.tr-champion-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 2rem;
+  background: rgba(255, 200, 0, 0.06);
+  border: 1px solid rgba(255, 200, 0, 0.25);
+  border-radius: var(--radius-lg);
+  max-width: 480px;
+  width: 100%;
+}
+
+.tr-champion-image-wrap {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid rgba(255, 200, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.tr-champion-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tr-champion-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 200, 0, 0.4);
+}
+
+.tr-champion-info {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.tr-champion-title {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffc800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 0.5rem;
+  word-break: break-word;
+}
+
+.tr-champion-votes {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  color: rgba(255, 200, 0, 0.75);
+}
+
+/* ── Bracket Layout ── */
+.tr-bracket {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* ── Round Section ── */
+.tr-round-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tr-round-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 204, 255, 0.15);
+}
+
+.tr-round-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+/* ── Matchups List ── */
+.tr-matchups-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ── Matchup Card ── */
+.tr-matchup-card {
+  position: relative;
+  background: var(--gradient-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 204, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  overflow: hidden;
+}
+
+.tr-matchup-card--complete {
+  border-color: rgba(0, 204, 255, 0.3);
+}
+
+/* ── VS divider ── */
+.tr-matchup-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0;
+}
+
+.tr-vs-text {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: rgba(0, 204, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+/* ── Meme Slot ── */
+.tr-meme-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.tr-meme-slot--winner {
+  background: rgba(0, 204, 255, 0.08);
+  border: 1px solid rgba(0, 204, 255, 0.25);
+}
+
+.tr-meme-slot--loser {
+  opacity: 0.5;
+}
+
+.tr-meme-slot--tbd {
+  opacity: 0.45;
+}
+
+/* Meme image */
+.tr-meme-slot-image {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 204, 255, 0.15);
+}
+
+.tr-meme-slot--winner .tr-meme-slot-image {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 8px rgba(0, 204, 255, 0.3);
+}
+
+.tr-meme-slot-image--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tr-meme-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tr-meme-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 204, 255, 0.3);
+}
+
+.tr-tbd-label {
+  font-family: var(--font-primary);
+  font-size: 0.6rem;
+  color: rgba(0, 204, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Meme info */
+.tr-meme-slot-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.tr-meme-slot-title {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+.tr-meme-slot-title--tbd {
+  color: rgba(0, 204, 255, 0.4);
+  font-style: italic;
+}
+
+.tr-meme-slot-votes {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-secondary);
+  font-size: 0.8rem;
+  color: rgba(0, 204, 255, 0.6);
+}
+
+.tr-vote-number {
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  line-height: 1;
+}
+
+.tr-vote-label {
+  font-size: 0.75rem;
+}
+
+/* Winner badge */
+.tr-winner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  background: rgba(0, 204, 255, 0.15);
+  border: 1px solid rgba(0, 204, 255, 0.4);
+  border-radius: 999px;
+  font-family: var(--font-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Empty state ── */
+.tr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  min-height: 300px;
+  text-align: center;
+}
+
+.tr-empty-icon {
+  color: rgba(0, 204, 255, 0.25);
+}
+
+.tr-empty p {
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  color: rgba(0, 204, 255, 0.6);
+  max-width: 420px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tr-container {
+    padding: 1rem;
+  }
+
+  .tr-title {
+    font-size: 1.5rem;
+  }
+
+  .tr-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tr-matchups-list {
+    grid-template-columns: 1fr;
+  }
+
+  .tr-champion-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.25rem;
+  }
+
+  .tr-champion-info {
+    text-align: center;
+  }
+
+  .tr-champion-votes {
+    justify-content: center;
+  }
+
+  .tr-metadata {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .tr-metadata-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .tr-title {
+    font-size: 1.2rem;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .tr-header-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tr-champion-banner {
+    padding: 1.5rem 1rem;
+  }
+
+  .tr-champion-label {
+    font-size: 1.1rem;
+  }
+
+  .tr-meme-slot-image {
+    width: 48px;
+    height: 48px;
+  }
+}

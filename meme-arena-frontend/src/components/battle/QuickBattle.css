@@ -1,0 +1,463 @@
+/* QuickBattle Component Styles */
+
+.quick-battle-container {
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.quick-battle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.quick-battle-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-primary);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.quick-battle-subtitle {
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  color: rgba(0, 204, 255, 0.65);
+  margin: 0.4rem 0 0;
+}
+
+/* ── Loading State ── */
+.quick-battle-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1.5rem;
+}
+
+.quick-battle-loading p {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  color: rgba(0, 204, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+/* ── Error State ── */
+.quick-battle-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.quick-battle-error-icon {
+  color: rgba(0, 204, 255, 0.5);
+}
+
+.quick-battle-error h2 {
+  font-family: var(--font-primary);
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.quick-battle-error p {
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  color: rgba(0, 204, 255, 0.7);
+  max-width: 420px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.quick-battle-error-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Battle Arena ── */
+.quick-battle-arena {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* VS divider */
+.battle-vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.battle-vs-text {
+  font-family: var(--font-primary);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow:
+    0 0 10px var(--primary-blue),
+    0 0 20px var(--primary-blue),
+    0 0 30px var(--primary-blue);
+  animation: vsPulse 2s ease-in-out infinite;
+}
+
+@keyframes vsPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 10px var(--primary-blue),
+      0 0 20px var(--primary-blue),
+      0 0 30px var(--primary-blue);
+  }
+  50% {
+    text-shadow:
+      0 0 5px var(--primary-blue),
+      0 0 10px var(--primary-blue),
+      0 0 15px var(--primary-blue),
+      0 0 25px var(--accent-blue);
+  }
+}
+
+/* ── Meme Cards Row ── */
+.battle-memes-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* ── Meme Card ── */
+.battle-meme-card {
+  background: var(--gradient-card);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0, 204, 255, 0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.battle-meme-card:hover {
+  border-color: rgba(0, 204, 255, 0.4);
+  box-shadow: var(--shadow-elevated);
+}
+
+.battle-meme-card.voted-card {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
+}
+
+.battle-meme-card.winner-card {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+}
+
+/* Meme image */
+.battle-meme-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.battle-meme-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.battle-meme-card:hover .battle-meme-image {
+  transform: scale(1.04);
+}
+
+.battle-meme-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 204, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Voted overlay */
+.voted-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 204, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.voted-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 204, 255, 0.9);
+  color: var(--black-blue);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.6);
+}
+
+/* Meme info */
+.battle-meme-info {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.battle-meme-title {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  line-height: 1.3;
+  /* Clamp to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Vote count */
+.battle-vote-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  color: rgba(0, 204, 255, 0.75);
+}
+
+.vote-count-number {
+  font-family: var(--font-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  line-height: 1;
+}
+
+/* Vote bar */
+.vote-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.vote-bar-track {
+  height: 6px;
+  background: rgba(0, 204, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.vote-bar-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 6px rgba(0, 204, 255, 0.5);
+}
+
+.vote-bar-label {
+  font-family: var(--font-secondary);
+  font-size: 0.8rem;
+  color: rgba(0, 204, 255, 0.55);
+  text-align: right;
+}
+
+/* Vote button */
+.battle-vote-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--primary-blue);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--primary-blue);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.battle-vote-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 204, 255, 0.15), transparent);
+  transition: left var(--transition-slow);
+}
+
+.battle-vote-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.battle-vote-btn:hover:not(:disabled) {
+  background: var(--primary-blue);
+  color: var(--black-blue);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+.battle-vote-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.battle-vote-btn:disabled:hover {
+  background: transparent;
+  color: var(--primary-blue);
+  box-shadow: none;
+}
+
+/* ── Countdown / Next Pair ── */
+.battle-countdown-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: rgba(0, 204, 255, 0.05);
+  border: 1px solid rgba(0, 204, 255, 0.2);
+  border-radius: var(--radius-lg);
+}
+
+.battle-countdown-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  color: rgba(0, 204, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.battle-countdown-progress {
+  width: 100%;
+  max-width: 400px;
+  height: 4px;
+  background: rgba(0, 204, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.battle-countdown-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 204, 255, 0.6);
+  animation: countdownShrink 1.5s linear forwards;
+}
+
+@keyframes countdownShrink {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* ── Skip / Next button ── */
+.battle-actions-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .quick-battle-container {
+    padding: 1rem;
+  }
+
+  .quick-battle-title {
+    font-size: 1.5rem;
+  }
+
+  .battle-memes-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .battle-vs-divider {
+    order: 1;
+  }
+
+  .battle-vs-text {
+    font-size: 1.8rem;
+  }
+
+  .battle-meme-card:first-child {
+    order: 0;
+  }
+
+  .battle-meme-card:last-child {
+    order: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-battle-title {
+    font-size: 1.2rem;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .battle-meme-info {
+    padding: 1rem;
+  }
+}

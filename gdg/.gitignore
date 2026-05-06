@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────────────────────────
+# Backend-specific gitignore
+# ─────────────────────────────────────────────────────────────
+
+# Maven build output — contains compiled .properties files
+# with any hardcoded dev secrets copied from src/main/resources
+target/
+
+# Compiled class files
+*.class
+
+# Package archives
+*.jar
+*.war
+
+# Maven wrapper binary
+.mvn/wrapper/maven-wrapper.jar
+
+# jqwik property-test database (auto-regenerated on test run)
+.jqwik-database
+
+# User-uploaded files (runtime data, not source code)
+uploads/
+
+# Log files
+*.log
+logs/
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db

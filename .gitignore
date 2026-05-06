@@ -1,0 +1,218 @@
+# =============================================================
+# .gitignore — Meme Voting Arena
+# Covers: Java/Maven backend, React/Vite frontend, Docker, IDE
+# =============================================================
+
+# ─────────────────────────────────────────────────────────────
+# SECRETS & ENVIRONMENT FILES  ← most important section
+# Never commit real credentials, tokens, or env files with values.
+# ─────────────────────────────────────────────────────────────
+
+# Actual env files (contain real secrets)
+.env
+.env.dev
+.env.prod
+.env.local
+.env.*.local
+
+# Frontend env locals (Vite / CRA convention)
+meme-arena-frontend/.env.local
+meme-arena-frontend/.env.development.local
+meme-arena-frontend/.env.test.local
+meme-arena-frontend/.env.production.local
+
+# Any accidental secret files
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+secrets.json
+credentials.json
+service-account*.json
+
+# ─────────────────────────────────────────────────────────────
+# JAVA / MAVEN
+# ─────────────────────────────────────────────────────────────
+
+# Compiled output — contains copies of all .properties files
+# including any with hardcoded dev secrets
+target/
+gdg/target/
+
+# Compiled class files
+*.class
+
+# Package archives
+*.jar
+*.war
+*.nar
+*.ear
+
+# Maven wrapper jar (keep the scripts, not the binary)
+.mvn/wrapper/maven-wrapper.jar
+
+# Maven release plugin artifacts
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# jqwik property-test database (auto-regenerated)
+.jqwik-database
+gdg/.jqwik-database
+
+# ─────────────────────────────────────────────────────────────
+# NODE / REACT / VITE
+# ─────────────────────────────────────────────────────────────
+
+node_modules/
+meme-arena-frontend/node_modules/
+
+# Build output
+meme-arena-frontend/build/
+meme-arena-frontend/dist/
+dist/
+build/
+
+# Vite cache
+meme-arena-frontend/.vite/
+.vite/
+
+# npm / yarn / pnpm debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# ─────────────────────────────────────────────────────────────
+# DOCKER
+# ─────────────────────────────────────────────────────────────
+
+# Docker env files — examples (.env.dev.example, .env.prod.example) ARE committed
+# Actual files with real values are NOT
+.env.dev
+.env.prod
+
+# ─────────────────────────────────────────────────────────────
+# FILE UPLOADS (user-generated content)
+# ─────────────────────────────────────────────────────────────
+
+uploads/
+gdg/uploads/
+meme-arena-frontend/uploads/
+
+# ─────────────────────────────────────────────────────────────
+# LOG FILES
+# ─────────────────────────────────────────────────────────────
+
+*.log
+logs/
+gdg/logs/
+
+# ─────────────────────────────────────────────────────────────
+# IDE & EDITOR FILES
+# ─────────────────────────────────────────────────────────────
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+
+# NetBeans
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+
+# ─────────────────────────────────────────────────────────────
+# OS GENERATED FILES
+# ─────────────────────────────────────────────────────────────
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─────────────────────────────────────────────────────────────
+# TEMPORARY & MISC
+# ─────────────────────────────────────────────────────────────
+
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Database files (local SQLite, H2 file-based)
+*.db
+*.sqlite
+*.sqlite3
+*.mv.db
+*.trace.db
+
+# Compressed archives
+*.zip
+*.tar.gz
+*.rar
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ─────────────────────────────────────────────────────────────
+# WHAT IS INTENTIONALLY COMMITTED (overrides above)
+# ─────────────────────────────────────────────────────────────
+
+# Example env files (placeholders only, no real values)
+!.env.dev.example
+!.env.prod.example
+
+# All Spring profile configs are committed — secrets inside them
+# MUST use ${ENV_VAR} placeholders, never hardcoded values
+!gdg/src/main/resources/application.properties
+!gdg/src/main/resources/application-dev.properties
+!gdg/src/main/resources/application-docker-dev.properties
+!gdg/src/main/resources/application-prod.properties
+
+# Frontend env files (placeholder values only, no real secrets)
+!meme-arena-frontend/.env.development
+!meme-arena-frontend/.env.production
+
+# Maven wrapper scripts (not the binary)
+!gdg/mvnw
+!gdg/mvnw.cmd
