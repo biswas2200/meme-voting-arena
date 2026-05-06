@@ -138,7 +138,7 @@
   background: rgba(0, 20, 40, 0.6);
   border: 1px solid rgba(0, 188, 255, 0.3);
   border-radius: 1.5rem;
-  padding: 3rem;
+  padding: 3rem 3rem 5rem 3rem; /* extra bottom padding for the stepped cards */
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
@@ -175,16 +175,22 @@
 .podium-place.first {
   order: 2;
   z-index: 3;
+  /* 1st place sits highest — no offset */
+  margin-bottom: 0;
 }
 
 .podium-place.second {
   order: 1;
   z-index: 2;
+  /* 2nd place steps down from 1st */
+  margin-bottom: -40px;
 }
 
 .podium-place.third {
   order: 3;
   z-index: 1;
+  /* 3rd place steps down further */
+  margin-bottom: -80px;
 }
 
 .podium-rank {
@@ -222,18 +228,21 @@
   height: 280px;
   border-color: #ffd700;
   background: rgba(255, 215, 0, 0.05);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
 }
 
 .podium-place.second .podium-content {
   height: 240px;
   border-color: #c0c0c0;
   background: rgba(192, 192, 192, 0.05);
+  box-shadow: 0 0 20px rgba(192, 192, 192, 0.1);
 }
 
 .podium-place.third .podium-content {
   height: 200px;
   border-color: #cd7f32;
   background: rgba(205, 127, 50, 0.05);
+  box-shadow: 0 0 20px rgba(205, 127, 50, 0.1);
 }
 
 .podium-icon {

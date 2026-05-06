@@ -2,10 +2,14 @@
 
 A full-stack meme voting platform where users upload memes, vote on them, and compete in bracket-style tournaments. Built with **Spring Boot** backend and **React** frontend.
 
+> **Author:** [Amitosh Biswas](https://github.com/Biswas2200)
+
+---
+
 ## 🌟 Features
 
 - **User Authentication** — JWT-based registration and login
-- **Meme Upload & Management** — Upload memes with titles and image URLs
+- **Meme Upload & Management** — Upload memes with titles and image URLs or file upload
 - **Voting System** — Upvote/downvote memes with real-time WebSocket updates
 - **Leaderboard** — Top 5 memes ranked by vote count
 - **Quick Battle** — Head-to-head voting between two random memes
@@ -14,12 +18,14 @@ A full-stack meme voting platform where users upload memes, vote on them, and co
 - **Role-based Access** — Admin and user roles
 - **Responsive Design** — Works on desktop, tablet, and mobile
 
-## 🛠️ Technology Stack
+---
+
+## 🛠️ Tech Stack
 
 ### Backend
 - **Java 21** + **Spring Boot 3.5**
 - **Spring Security** — JWT authentication, role-based authorization
-- **Spring Data JPA** — Database operations
+- **Spring Data JPA** — ORM
 - **H2** — In-memory database for development
 - **PostgreSQL** — Production database (AWS RDS)
 - **WebSocket / STOMP** — Real-time communication
@@ -32,17 +38,19 @@ A full-stack meme voting platform where users upload memes, vote on them, and co
 - **@stomp/stompjs** — WebSocket client
 - **Vitest** + **@testing-library/react** — Unit and component tests
 
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Java 21+, Maven 3.6+
 - Node.js 18+, npm
+- Docker + Docker Compose (optional but recommended)
 
 ### Run with Docker (recommended)
 
 ```bash
 cp .env.dev.example .env.dev
-# Edit .env.dev if needed (defaults work for local dev)
 docker compose --env-file .env.dev up --build
 ```
 
@@ -66,10 +74,13 @@ npm run start
 ```
 
 ### Default Seed Users (dev profile only)
+
 | Username | Password | Role |
 |---|---|---|
 | `admin` | `admin123` | ADMIN |
 | `memeLord` | `password123` | USER |
+
+---
 
 ## 🏗️ Project Structure
 
@@ -82,21 +93,24 @@ meme-voting-arena/
 │   │   ├── dto/                  # Request/response DTOs
 │   │   ├── model/                # JPA entities
 │   │   ├── repository/           # Data access layer
+│   │   ├── scheduler/            # Tournament round advancement
 │   │   ├── security/             # JWT filter, UserPrincipal
 │   │   └── service/              # Business logic
-│   └── src/test/                 # Unit + integration tests
-├── meme-arena-frontend/          # React frontend
+│   └── src/test/                 # Unit + integration tests (88 tests)
+├── meme-arena-frontend/          # React + Vite frontend
 │   └── src/
 │       ├── components/           # Reusable components
 │       ├── contexts/             # Auth, Notification contexts
 │       ├── pages/                # Page components
-│       └── services/             # API client (axios)
-├── .env.dev.example              # Dev env template (copy to .env.dev)
+│       └── services/             # Axios API client
+├── .env.dev.example              # Dev env template → copy to .env.dev
 ├── .env.prod.example             # Prod env template
 ├── docker-compose.yml            # Local dev stack
 ├── docker-compose.prod.yml       # Production reference
 └── SECURITY_CHECKLIST.md         # Pre-deployment security checklist
 ```
+
+---
 
 ## 🔌 API Endpoints
 
@@ -110,7 +124,7 @@ meme-voting-arena/
 | Method | Path | Description |
 |---|---|---|
 | GET | `/api/auth/profile` | Get own profile + stats |
-| PUT | `/api/auth/profile` | Update username/email/password |
+| PUT | `/api/auth/profile` | Update username / email / password |
 | POST | `/api/auth/profile/avatar` | Upload avatar |
 
 ### Memes
@@ -121,7 +135,7 @@ meme-voting-arena/
 | GET | `/api/memes/battle` | Public | Two random memes |
 | POST | `/api/memes` | User | Create meme (URL) |
 | POST | `/api/memes/upload` | User | Upload meme (file) |
-| PUT | `/api/memes/{id}/vote` | User | Upvote/downvote |
+| PUT | `/api/memes/{id}/vote` | User | Upvote / downvote |
 | DELETE | `/api/memes/{id}` | User/Admin | Delete (owner or admin) |
 
 ### Battle & Tournaments
@@ -138,11 +152,11 @@ meme-voting-arena/
 | POST | `/api/battle/tournaments/{id}/approve` | Admin | Approve |
 | POST | `/api/battle/tournaments/{id}/reject` | Admin | Reject |
 
+---
+
 ## 🔧 Configuration
 
-All secrets are supplied via environment variables. No secrets are hardcoded.
-
-### Environment Variables
+All secrets are supplied via environment variables — nothing hardcoded.
 
 | Variable | Required | Description |
 |---|---|---|
@@ -160,34 +174,37 @@ Generate a secure JWT secret:
 openssl rand -hex 32
 ```
 
+---
+
 ## 🧪 Testing
 
 ```bash
-# Backend — all unit tests
+# Backend — all tests
 cd gdg && ./mvnw test
-
-# Backend — specific test class
-./mvnw test -Dtest=MemeServiceUnitTest
 
 # Frontend — all tests
 cd meme-arena-frontend && npm test
 ```
 
 **Test coverage:**
-- 88 backend tests (unit + integration) — JUnit 5 + Mockito + AssertJ
-- 114 frontend tests — Vitest + @testing-library/react
+- **88 backend tests** — JUnit 5 + Mockito + AssertJ (unit + integration)
+- **114 frontend tests** — Vitest + @testing-library/react
+
+---
 
 ## 🔒 Security
 
 See [SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md) for the full pre-deployment checklist.
 
-Key points:
 - All write endpoints require JWT authentication
 - Admin-only endpoints enforce `ROLE_ADMIN`
 - Passwords hashed with BCrypt
-- JWT secret must be set via `JWT_SECRET` env var in production
+- JWT secret injected via `JWT_SECRET` env var in production
 - CORS restricted to configured origins
 - File uploads limited to 1 MB, images only
+- `target/` and `node_modules/` excluded from git (no compiled secrets)
+
+---
 
 ## 🐛 Troubleshooting
 
@@ -199,10 +216,12 @@ Key points:
 | DB connection | Check `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` |
 | File upload fails | Check `spring.servlet.multipart.max-file-size` |
 
+---
+
 ## 📝 License
 
 MIT License
 
 ---
 
-*Built for the GDG Community* 🏆
+**Built by [Amitosh Biswas](https://github.com/Biswas2200)**

@@ -22,11 +22,21 @@ export const AuthProvider = ({ children }) => {
 
       if (savedToken && savedUser) {
         try {
-          // Set user immediately from localStorage so UI doesn't flash
           setUser(JSON.parse(savedUser));
           setToken(savedToken);
-          // Silently refresh profile data in background to verify token is still valid
-          const res = await api.get('/api/auth/profile');
+        } catch {
+          _clearSession();
+        }
+      }
+
+      // Set loading false IMMEDIATELY — never block the UI waiting for the network.
+      // The profile refresh runs in the background after the app is already visible.
+      setLoading(false);
+
+      // Background token validation — only runs if we have a saved session
+      if (savedToken && savedUser) {
+        try {
+          const res = await api.get('/api/auth/profile', { timeout: 5000 });
           const fresh = {
             id:       res.data.id,
             username: res.data.username,
@@ -35,13 +45,14 @@ export const AuthProvider = ({ children }) => {
           };
           setUser(fresh);
           localStorage.setItem('user', JSON.stringify(fresh));
-        } catch {
-          // Token expired, user deleted (e.g. DB wiped in dev), or invalid
-          // Silently clear session — no error toast, just redirect to logged-out state
-          _clearSession();
+        } catch (err) {
+          // Only clear session on explicit 401 (token expired/invalid)
+          // Network errors, timeouts, 500s — keep the cached user
+          if (err.response?.status === 401) {
+            _clearSession();
+          }
         }
       }
-      setLoading(false);
     };
     initAuth();
   }, []);

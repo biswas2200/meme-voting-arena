@@ -117,18 +117,19 @@
     <div id="root"></div>
     
     <script>
-      // Hide loader when React app is ready
+      // Hide loader when React app is ready — max 3 seconds regardless
+      function hideLoader() {
+        const loader = document.getElementById('tronLoader');
+        if (loader) {
+          loader.classList.add('fade-out');
+          setTimeout(() => { loader.remove(); }, 500);
+        }
+      }
       window.addEventListener('load', () => {
-        setTimeout(() => {
-          const loader = document.getElementById('tronLoader');
-          if (loader) {
-            loader.classList.add('fade-out');
-            setTimeout(() => {
-              loader.remove();
-            }, 500);
-          }
-        }, 1500);
+        setTimeout(hideLoader, 800);
       });
+      // Safety net: always remove after 3 seconds even if load event is slow
+      setTimeout(hideLoader, 3000);
     </script>
   </body>
 </html>

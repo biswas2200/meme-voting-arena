@@ -8,6 +8,10 @@ export default defineConfig({
       include: ['**/*.{jsx,js,tsx,ts}'],
     }),
   ],
+  // Polyfill Node.js `global` for sockjs-client which uses it in the browser
+  define: {
+    global: 'globalThis',
+  },
   test: {
     globals: true,
     environment: 'happy-dom',
@@ -35,6 +39,10 @@ export default defineConfig({
     esbuildOptions: {
       loader: {
         '.js': 'jsx',
+      },
+      // Also define global at the esbuild level for deps like sockjs-client
+      define: {
+        global: 'globalThis',
       },
     },
   },
