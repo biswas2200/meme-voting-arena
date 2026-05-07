@@ -1,0 +1,33 @@
+# =============================================================
+# Dockerfile.prebuilt — Uses a pre-built JAR from target/
+# Use this when Docker build containers can't reach the internet.
+#
+# Steps:
+#   1. Build JAR locally: ./mvnw clean package -DskipTests -B
+#   2. Copy JAR:          cp target/*.jar app.jar
+#   3. Build image:       docker build -f Dockerfile.prebuilt -t meme-arena-backend .
+#   4. Cleanup:           rm app.jar
+# =============================================================
+
+FROM eclipse-temurin:21-jre-alpine AS runtime
+
+# Security: run as non-root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copy the pre-built fat JAR (copied to root as app.jar before docker build)
+COPY app.jar app.jar
+
+# Create uploads directory and set ownership
+RUN mkdir -p uploads && chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", \
+  "-XX:+UseContainerSupport", \
+  "-XX:MaxRAMPercentage=75.0", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "-jar", "app.jar"]
