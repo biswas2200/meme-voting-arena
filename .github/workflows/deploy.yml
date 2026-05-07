@@ -41,6 +41,7 @@ jobs:
       - name: Build JAR
         run: |
           cd gdg
+          chmod +x mvnw
           ./mvnw clean package -DskipTests -B
 
       - name: Copy JAR for Docker
