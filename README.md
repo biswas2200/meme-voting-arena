@@ -202,16 +202,7 @@ GitHub Actions
 
 ### Infrastructure Diagram
 
-> **Paste your infrastructure screenshot here**
->
-> To generate the diagram:
-> 1. Open [AWS Console → CloudFormation → Infrastructure Composer](https://console.aws.amazon.com/cloudformation/designer)
-> 2. Upload `infrastructure.yaml` from this repository
-> 3. Screenshot the rendered diagram and replace this section
-
-![Meme Arena AWS Infrastructure](docs/infrastructure.png)
-
-*If the image above is not visible, see `infrastructure.yaml` for the full CloudFormation template.*
+<img width="3714" height="2802" alt="infrastructure-composer-template yaml (5)" src="https://github.com/user-attachments/assets/b3f21deb-f11a-4cca-9563-21ea7c41a023" />
 
 ---
 
