@@ -39,7 +39,7 @@ public class TournamentController {
      * Requirement: 5.1
      */
     @PostMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createTournament(
             @Valid @RequestBody TournamentCreateRequest request,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
@@ -71,7 +71,7 @@ public class TournamentController {
      * Requirement: 6.2
      */
     @GetMapping("/my")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<TournamentSummaryResponse>> getMyTournaments(
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         List<TournamentSummaryResponse> tournaments = tournamentService.getMyTournaments(userPrincipal.getId());

@@ -30,7 +30,7 @@ public class BattleVoteController {
      * Requirements: 2.1
      */
     @PostMapping("/quick")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> voteOnQuickBattle(
             @RequestBody QuickBattleVoteRequest request,
             Authentication authentication) {
@@ -54,7 +54,7 @@ public class BattleVoteController {
      * Requirements: 8.1
      */
     @PostMapping("/tournament")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> voteOnTournamentMatchup(
             @RequestBody TournamentMatchupVoteRequest request,
             Authentication authentication) {

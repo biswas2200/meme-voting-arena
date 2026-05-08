@@ -37,13 +37,21 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid — clear and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      // Only redirect if not already on login/register page
-      if (!window.location.pathname.match(/^\/(login|register)/)) {
-        window.location.href = '/login';
+      const currentPath = window.location.pathname;
+
+      // Don't redirect if already on auth pages
+      if (currentPath.match(/^\/(login|register)/)) {
+        return Promise.reject(error);
+      }
+
+      // Only clear session and redirect if we actually had a token
+      // (i.e. the token expired or is invalid — not just an unauthenticated request)
+      const hadToken = !!localStorage.getItem('token');
+      if (hadToken) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Use replace so the user can go back after re-login
+        window.location.replace('/login');
       }
     }
     return Promise.reject(error);

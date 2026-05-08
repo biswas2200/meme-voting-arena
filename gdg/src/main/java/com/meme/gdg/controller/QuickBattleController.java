@@ -20,7 +20,7 @@ public class QuickBattleController {
     }
 
     @GetMapping("/pair")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BattlePairResponse> getNewPair() {
         BattlePairResponse pair = quickBattleService.getNewPair();
         return ResponseEntity.ok(pair);
