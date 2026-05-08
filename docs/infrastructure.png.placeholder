@@ -1,0 +1,8 @@
+Replace this file with your infrastructure screenshot named infrastructure.png
+
+Steps:
+1. Open AWS Console → CloudFormation → Infrastructure Composer
+2. Upload infrastructure.yaml from the project root
+3. Screenshot the rendered diagram
+4. Save as docs/infrastructure.png
+5. Delete this placeholder file

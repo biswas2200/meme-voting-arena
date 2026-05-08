@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- Title -->
+    <mxCell id="title" value="Meme Arena — AWS Infrastructure" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="527" y="20" width="600" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- DEVELOPER / CI-CD ZONE -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="dev-zone" value="Developer Machine + GitHub Actions" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="40" y="80" width="380" height="260" as="geometry" />
+    </mxCell>
+
+    <mxCell id="dev" value="👨‍💻 Developer&#xa;(Local Machine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="120" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <mxCell id="github" value="GitHub&#xa;Repository&#xa;(main branch)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="260" y="120" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <mxCell id="gha" value="⚙️ GitHub Actions&#xa;CI/CD Pipeline&#xa;&#xa;• Build JAR (Maven)&#xa;• Build Docker image&#xa;• Push to ECR&#xa;• Deploy to ECS&#xa;• Register ALB target IP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+      <mxGeometry x="140" y="210" width="220" height="110" as="geometry" />
+    </mxCell>
+
+    <!-- git push arrow -->
+    <mxCell id="e-dev-github" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="dev" target="github" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-dev-github-lbl" value="git push" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-dev-github">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- trigger arrow -->
+    <mxCell id="e-github-gha" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="github" target="gha" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-github-gha-lbl" value="triggers" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-github-gha">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- AWS CLOUD ZONE -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <mxCell id="aws-zone" value="AWS Cloud  (ap-south-1 / Mumbai)" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#FF9900;fontStyle=1;fontSize=13;strokeWidth=3;" vertex="1" parent="1">
+      <mxGeometry x="460" y="80" width="1150" height="980" as="geometry" />
+    </mxCell>
+
+    <!-- ── ECR ── -->
+    <mxCell id="ecr" value="🗄️ Amazon ECR&#xa;Container Registry&#xa;&#xa;meme-arena-backend:latest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="480" y="120" width="200" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- GHA → ECR -->
+    <mxCell id="e-gha-ecr" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="gha" target="ecr" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-gha-ecr-lbl" value="docker push" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-gha-ecr">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── S3 UPLOADS BUCKET ── -->
+    <mxCell id="s3-uploads" value="🪣 S3 Bucket&#xa;meme-arena-uploads&#xa;&#xa;Meme image files&#xa;(public-read)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="480" y="240" width="200" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ── S3 FRONTEND BUCKET ── -->
+    <mxCell id="s3-frontend" value="🪣 S3 Bucket&#xa;meme-arena-frontend&#xa;&#xa;React static build&#xa;(index.html, JS, CSS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="480" y="370" width="200" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ── CLOUDFRONT ── -->
+    <mxCell id="cloudfront" value="🌐 Amazon CloudFront&#xa;CDN  (d1i3pilqzxap5e.cloudfront.net)&#xa;&#xa;Routes:&#xa;  /api/*  → ALB (BackendOrigin)&#xa;  /uploads/* → ALB (BackendOrigin)&#xa;  /*      → S3 (React app)&#xa;&#xa;HTTPS only · Global edge cache&#xa;Custom errors: 403/404 → index.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;" vertex="1" parent="1">
+      <mxGeometry x="730" y="120" width="310" height="180" as="geometry" />
+    </mxCell>
+
+    <!-- S3 frontend → CloudFront -->
+    <mxCell id="e-s3f-cf" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s3-frontend" target="cloudfront" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-s3f-cf-lbl" value="serves static files" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-s3f-cf">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── USER BROWSER ── -->
+    <mxCell id="browser" value="🖥️ User Browser&#xa;&#xa;HTTPS requests to&#xa;d1i3pilqzxap5e.cloudfront.net" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="180" width="200" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Browser ↔ CloudFront -->
+    <mxCell id="e-browser-cf" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="browser" target="cloudfront" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-browser-cf-lbl" value="HTTPS" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-browser-cf">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── VPC ── -->
+    <mxCell id="vpc" value="VPC  vpc-02134a0c30903a40c" style="swimlane;startSize=25;fillColor=#f0f0f0;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="480" y="500" width="1100" height="530" as="geometry" />
+    </mxCell>
+
+    <!-- ── ALB ── -->
+    <mxCell id="alb" value="⚖️ Application Load Balancer&#xa;meme-arena-alb&#xa;&#xa;Port 80 (HTTP)&#xa;Health check: /actuator/health&#xa;Target group: meme-arena-tg (port 8080)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="520" y="60" width="280" height="100" as="geometry" />
+    </mxCell>
+
+    <!-- CloudFront → ALB -->
+    <mxCell id="e-cf-alb" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="cloudfront" target="alb" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-cf-alb-lbl" value="/api/* and /uploads/*&#xa;HTTP port 80" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-cf-alb">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── ECS FARGATE ── -->
+    <mxCell id="ecs-zone" value="ECS Fargate Cluster  (meme-cluster)" style="swimlane;startSize=25;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="500" y="200" width="600" height="270" as="geometry" />
+    </mxCell>
+
+    <mxCell id="ecs-task" value="📦 ECS Task  (meme-arena-backend:3)&#xa;Fargate  ·  0.5 vCPU  ·  1 GB RAM&#xa;&#xa;Spring Boot 3 + Java 21&#xa;Port 8080&#xa;Profile: prod&#xa;&#xa;Env vars:&#xa;  SPRING_PROFILES_ACTIVE=prod&#xa;  DATABASE_URL → RDS&#xa;  JWT_SECRET&#xa;  S3_BUCKET&#xa;  CORS_ORIGINS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="250" height="200" as="geometry" />
+    </mxCell>
+
+    <mxCell id="ecs-sg" value="🔒 Security Group&#xa;meme-arena-ecs-sg&#xa;Inbound: 8080 (self)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="330" y="80" width="160" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- ALB → ECS Task -->
+    <mxCell id="e-alb-ecs" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="alb" target="ecs-task" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-alb-ecs-lbl" value="HTTP :8080" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-alb-ecs">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ECR → ECS Task -->
+    <mxCell id="e-ecr-ecs" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="ecr" target="ecs-task" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-ecr-ecs-lbl" value="pulls image" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-ecr-ecs">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── RDS ── -->
+    <mxCell id="rds" value="🗃️ Amazon RDS PostgreSQL&#xa;meme-arena-db  (db.t3.micro)&#xa;&#xa;Port 5432&#xa;DB: meme_arena&#xa;Not publicly accessible&#xa;&#xa;Tables: users, memes, votes,&#xa;battle_pairs, tournaments,&#xa;tournament_matchups, battle_votes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;" vertex="1" parent="1">
+      <mxGeometry x="500" y="200" width="250" height="180" as="geometry" />
+    </mxCell>
+
+    <mxCell id="rds-sg" value="🔒 RDS Security Group&#xa;Inbound: 5432&#xa;from ECS SG only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="790" y="260" width="160" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- ECS → RDS -->
+    <mxCell id="e-ecs-rds" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="ecs-task" target="rds" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-ecs-rds-lbl" value="JDBC :5432&#xa;(private subnet)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-ecs-rds">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ECS → S3 uploads -->
+    <mxCell id="e-ecs-s3" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="ecs-task" target="s3-uploads" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-ecs-s3-lbl" value="PutObject&#xa;(IAM task role)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-ecs-s3">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── IAM ROLE ── -->
+    <mxCell id="iam" value="🔑 IAM Task Role&#xa;meme-arena-ecs-task-role&#xa;&#xa;Policy: s3:PutObject&#xa;on meme-arena-uploads/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="790" y="380" width="200" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ── CLOUDWATCH LOGS ── -->
+    <mxCell id="cwlogs" value="📋 CloudWatch Logs&#xa;/ecs/meme-arena-backend&#xa;&#xa;Application logs,&#xa;errors, startup events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="790" y="500" width="200" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ECS → CloudWatch -->
+    <mxCell id="e-ecs-cw" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="ecs-task" target="cwlogs" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e-ecs-cw-lbl" value="awslogs driver" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;fontSize=10;" vertex="1" connectable="0" parent="e-ecs-cw">
+      <mxGeometry x="-0.1" relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ── LEGEND ── -->
+    <mxCell id="legend" value="Legend" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="880" width="380" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="l1" value="── Solid arrow: live traffic / data flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="910" width="340" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="l2" value="- - Dashed arrow: build / deploy / async" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="935" width="340" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="l3" value="🔒 Orange box: Security Group / IAM" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="960" width="340" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="l4" value="🟡 Yellow box: AWS Storage (S3, ECR)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="985" width="340" height="25" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
