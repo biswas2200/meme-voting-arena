@@ -38,6 +38,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const currentPath = window.location.pathname;
+      const requestUrl = error.config?.url || '';
       const hadToken = !!localStorage.getItem('token');
 
       // Log to persistent storage so it survives the redirect
@@ -46,25 +47,26 @@ api.interceptors.response.use(
         existing.push({
           t: new Date().toISOString(),
           msg: 'API 401 intercepted',
-          data: {
-            url: error.config?.url,
-            method: error.config?.method,
-            currentPath,
-            hadToken,
-            responseData: error.response?.data
-          }
+          data: { url: requestUrl, currentPath, hadToken, responseData: error.response?.data }
         });
         localStorage.setItem('_authLog', JSON.stringify(existing));
       } catch {}
 
-      console.warn('[API] 401 on', error.config?.url, '| hadToken:', hadToken, '| path:', currentPath);
+      console.warn('[API] 401 on', requestUrl, '| hadToken:', hadToken, '| path:', currentPath);
 
       // Don't redirect if already on auth pages
       if (currentPath.match(/^\/(login|register)/)) {
         return Promise.reject(error);
       }
 
+      // Don't redirect on profile validation — just reject silently
+      // (background validation failure should not kick the user out)
+      if (requestUrl.includes('/api/auth/profile')) {
+        return Promise.reject(error);
+      }
+
       // Only clear session and redirect if we actually had a token
+      // and this is a real authenticated action (not background check)
       if (hadToken) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');

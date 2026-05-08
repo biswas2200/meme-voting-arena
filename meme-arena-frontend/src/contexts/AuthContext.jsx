@@ -51,36 +51,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   /* ── Background token validation on mount ── */
-  useEffect(() => {
-    const validateToken = async () => {
-      const savedToken = localStorage.getItem('token');
-      authLog('VALIDATE: starting background token check', { hasToken: !!savedToken });
-      if (!savedToken) return;
-
-      try {
-        const res = await api.get('/api/auth/profile', { timeout: 5000 });
-        const fresh = {
-          id:       res.data.id,
-          username: res.data.username,
-          email:    res.data.email,
-          role:     res.data.role
-        };
-        authLog('VALIDATE: token valid, refreshed user', { username: fresh.username });
-        setUser(fresh);
-        localStorage.setItem('user', JSON.stringify(fresh));
-      } catch (err) {
-        authLog('VALIDATE: token check failed', {
-          status: err.response?.status,
-          message: err.response?.data?.message || err.message
-        });
-        if (err.response?.status === 401) {
-          authLog('VALIDATE: 401 received — clearing session');
-          _clearSession();
-        }
-      }
-    };
-    validateToken();
-  }, []);
+  /* DISABLED — causes session clearing race condition.
+     Token validity is checked on every API call via the 401 interceptor.
+  useEffect(() => { ... }, []); */
 
   const _clearSession = () => {
     authLog('CLEAR SESSION called', { stack: new Error().stack?.split('\n')[2]?.trim() });
