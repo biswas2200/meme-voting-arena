@@ -1,0 +1,79 @@
+{
+    "cpu": "512",
+    "memory": "1024",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "executionRoleArn": "arn:aws:iam::562273658670:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::562273658670:role/meme-arena-ecs-task-role",
+    "family": "meme-arena-backend",
+    "containerDefinitions": [
+        {
+            "name": "backend",
+            "image": "562273658670.dkr.ecr.ap-south-1.amazonaws.com/meme-arena-backend:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp",
+                    "name": "backend-8080-tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "DATABASE_URL",
+                    "value": "jdbc:postgresql://meme-arena-db.cv6gcmoks21t.ap-south-1.rds.amazonaws.com:5432/meme_arena?sslmode=require"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "value": "93b99d9ed8ff9e2b31f8fa6580f5a46a1adcb40a7bfa2ed72d2ccb6e9b2413bd"
+                },
+                {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "prod"
+                },
+                {
+                    "name": "JWT_EXPIRATION_MS",
+                    "value": "86400000"
+                },
+                {
+                    "name": "DATABASE_USERNAME",
+                    "value": "meme_user"
+                },
+                {
+                    "name": "CORS_ORIGINS",
+                    "value": "*"
+                },
+                {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "Hello_Friend206"
+                },
+                {
+                    "name": "S3_BUCKET",
+                    "value": "meme-arena-uploads-562273658670"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-south-1"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/meme-arena-backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ]
+}
