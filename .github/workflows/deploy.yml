@@ -66,45 +66,50 @@ jobs:
             --load-balancers "targetGroupArn=$TARGET_GROUP_ARN,containerName=backend,containerPort=8080" \
             --region $AWS_REGION
 
-      - name: Wait for ECS deployment to stabilize
+      - name: Wait for new ECS task to start
         run: |
-          echo "Waiting for ECS service to stabilize..."
-          aws ecs wait services-stable \
-            --cluster $ECS_CLUSTER \
-            --services $ECS_SERVICE \
-            --region $AWS_REGION
-          echo "ECS service is stable."
+          echo "Waiting 90 seconds for new task to start..."
+          sleep 90
 
       - name: Re-register new task IP with ALB target group
         run: |
-          # Get the new running task ARN
-          TASK_ARN=$(aws ecs list-tasks \
+          # Get all running task ARNs
+          TASK_ARNS=$(aws ecs list-tasks \
             --cluster $ECS_CLUSTER \
             --service-name $ECS_SERVICE \
             --region $AWS_REGION \
-            --query "taskArns[0]" --output text)
-          echo "Task ARN: $TASK_ARN"
+            --query "taskArns" --output text)
+          echo "Running tasks: $TASK_ARNS"
 
-          # Get the private IP of the new task
-          NEW_IP=$(aws ecs describe-tasks \
-            --cluster $ECS_CLUSTER \
-            --tasks $TASK_ARN \
-            --region $AWS_REGION \
-            --query "tasks[0].attachments[0].details[?name=='privateIPv4Address'].value|[0]" \
-            --output text)
-          echo "New task IP: $NEW_IP"
+          # Find the newest task IP (highest revision or most recently started)
+          NEW_IP=""
+          for TASK_ARN in $TASK_ARNS; do
+            TASK_DEF=$(aws ecs describe-tasks \
+              --cluster $ECS_CLUSTER \
+              --tasks $TASK_ARN \
+              --region $AWS_REGION \
+              --query "tasks[0].taskDefinitionArn" --output text)
+            IP=$(aws ecs describe-tasks \
+              --cluster $ECS_CLUSTER \
+              --tasks $TASK_ARN \
+              --region $AWS_REGION \
+              --query "tasks[0].attachments[0].details[?name=='privateIPv4Address'].value|[0]" \
+              --output text)
+            echo "Task: $TASK_ARN | Def: $TASK_DEF | IP: $IP"
+            NEW_IP=$IP  # last one wins — ECS lists newest last
+          done
+          echo "Registering IP: $NEW_IP"
 
           # Deregister all old targets
           OLD_TARGETS=$(aws elbv2 describe-target-health \
             --target-group-arn $TARGET_GROUP_ARN \
             --region $AWS_REGION \
-            --query "TargetHealthDescriptions[?TargetHealth.State!='draining'].Target.Id" \
+            --query "TargetHealthDescriptions[*].Target.Id" \
             --output text)
-          echo "Old targets: $OLD_TARGETS"
 
           for OLD_IP in $OLD_TARGETS; do
             if [ "$OLD_IP" != "$NEW_IP" ] && [ -n "$OLD_IP" ]; then
-              echo "Deregistering old IP: $OLD_IP"
+              echo "Deregistering: $OLD_IP"
               aws elbv2 deregister-targets \
                 --target-group-arn $TARGET_GROUP_ARN \
                 --targets "Id=$OLD_IP,Port=8080" \
@@ -113,14 +118,13 @@ jobs:
           done
 
           # Register the new task IP
-          echo "Registering new IP: $NEW_IP"
           aws elbv2 register-targets \
             --target-group-arn $TARGET_GROUP_ARN \
             --targets "Id=$NEW_IP,Port=8080" \
             --region $AWS_REGION
 
           # Wait for healthy
-          echo "Waiting for target to become healthy..."
+          echo "Waiting for $NEW_IP to become healthy..."
           aws elbv2 wait target-in-service \
             --target-group-arn $TARGET_GROUP_ARN \
             --targets "Id=$NEW_IP,Port=8080" \
