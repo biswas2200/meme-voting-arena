@@ -93,14 +93,33 @@ export const AuthProvider = ({ children }) => {
   /* ── Login ── */
   const login = async (credentials) => {
     try {
+      authLog('LOGIN: attempting', { username: credentials.username });
       const res = await api.post('/api/auth/signin', credentials);
+      authLog('LOGIN: response received', {
+        status: res.status,
+        hasToken: !!res.data?.token,
+        hasUser: !!res.data?.user,
+        dataKeys: Object.keys(res.data || {})
+      });
       const { token: newToken, user: userData } = res.data;
+      if (!newToken) {
+        authLog('LOGIN: ERROR - no token in response', { data: res.data });
+        return { success: false, message: 'Server did not return a token.' };
+      }
       setToken(newToken);
       setUser(userData);
       localStorage.setItem('token', newToken);
       localStorage.setItem('user', JSON.stringify(userData));
+      authLog('LOGIN: saved to localStorage', {
+        username: userData?.username,
+        tokenPreview: newToken.substring(0, 20) + '...'
+      });
       return { success: true, user: userData };
     } catch (err) {
+      authLog('LOGIN: error', {
+        status: err.response?.status,
+        message: err.response?.data?.message || err.message
+      });
       return {
         success: false,
         message: err.response?.data?.message || 'Login failed. Please try again.'
