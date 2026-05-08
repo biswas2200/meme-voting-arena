@@ -58,13 +58,47 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Deploy to ECS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
+          # Get current task definition and update image to the new commit SHA tag
+          TASK_DEF_JSON=$(aws ecs describe-task-definition \
+            --task-definition $TASK_DEFINITION \
+            --region $AWS_REGION \
+            --query "taskDefinition" \
+            --output json)
+
+          # Replace the image URI with the new commit-tagged image
+          NEW_TASK_DEF=$(echo $TASK_DEF_JSON | python3 -c "
+          import json, sys
+          td = json.load(sys.stdin)
+          for c in td['containerDefinitions']:
+              if c['name'] == 'backend':
+                  c['image'] = '$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG'
+          # Remove fields that can't be in register-task-definition
+          for f in ['taskDefinitionArn','revision','status','requiresAttributes','compatibilities','registeredAt','registeredBy']:
+              td.pop(f, None)
+          print(json.dumps(td))
+          ")
+
+          # Register new task definition revision
+          NEW_REVISION=$(echo $NEW_TASK_DEF | aws ecs register-task-definition \
+            --cli-input-json file:///dev/stdin \
+            --region $AWS_REGION \
+            --query "taskDefinition.revision" \
+            --output text)
+          echo "Registered task definition revision: $NEW_REVISION"
+
+          # Update service with new revision + keep load balancer attached
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
+            --task-definition $TASK_DEFINITION:$NEW_REVISION \
             --force-new-deployment \
             --load-balancers "targetGroupArn=$TARGET_GROUP_ARN,containerName=backend,containerPort=8080" \
             --region $AWS_REGION
+          echo "ECS service updated to revision $NEW_REVISION"
 
       - name: Wait for new ECS task to start
         run: |
