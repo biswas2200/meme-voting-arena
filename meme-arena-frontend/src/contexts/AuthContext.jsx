@@ -3,6 +3,21 @@ import api from '../services/api';
 
 const AuthContext = createContext();
 
+// ── Persistent debug logger — survives page redirects ──────────────────────
+// Read logs any time by running this in the browser console:
+//   JSON.parse(localStorage.getItem('_authLog') || '[]')
+const authLog = (msg, data) => {
+  const entry = { t: new Date().toISOString(), msg, data };
+  console.log('[AUTH]', msg, data ?? '');
+  try {
+    const existing = JSON.parse(localStorage.getItem('_authLog') || '[]');
+    existing.push(entry);
+    // Keep last 50 entries
+    if (existing.length > 50) existing.splice(0, existing.length - 50);
+    localStorage.setItem('_authLog', JSON.stringify(existing));
+  } catch {}
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
@@ -16,18 +31,31 @@ export const AuthProvider = ({ children }) => {
     try {
       const savedUser = localStorage.getItem('user');
       const savedToken = localStorage.getItem('token');
-      if (savedToken && savedUser) return JSON.parse(savedUser);
-    } catch {}
+      authLog('INIT: reading localStorage', {
+        hasToken: !!savedToken,
+        hasUser: !!savedUser,
+        tokenPreview: savedToken ? savedToken.substring(0, 20) + '...' : null
+      });
+      if (savedToken && savedUser) {
+        const parsed = JSON.parse(savedUser);
+        authLog('INIT: restored user from localStorage', { username: parsed.username, role: parsed.role });
+        return parsed;
+      }
+      authLog('INIT: no saved session found');
+    } catch (e) {
+      authLog('INIT: error parsing saved user', { error: e.message });
+    }
     return null;
   });
   const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [loading, setLoading] = useState(false); // no longer needed to block render
+  const [loading, setLoading] = useState(false);
 
   /* ── Background token validation on mount ── */
   useEffect(() => {
     const validateToken = async () => {
       const savedToken = localStorage.getItem('token');
-      if (!savedToken) return; // no session, nothing to validate
+      authLog('VALIDATE: starting background token check', { hasToken: !!savedToken });
+      if (!savedToken) return;
 
       try {
         const res = await api.get('/api/auth/profile', { timeout: 5000 });
@@ -37,12 +65,16 @@ export const AuthProvider = ({ children }) => {
           email:    res.data.email,
           role:     res.data.role
         };
+        authLog('VALIDATE: token valid, refreshed user', { username: fresh.username });
         setUser(fresh);
         localStorage.setItem('user', JSON.stringify(fresh));
       } catch (err) {
-        // Only clear session on explicit 401 (token expired/invalid)
-        // Network errors, timeouts, 500s — keep the cached user
+        authLog('VALIDATE: token check failed', {
+          status: err.response?.status,
+          message: err.response?.data?.message || err.message
+        });
         if (err.response?.status === 401) {
+          authLog('VALIDATE: 401 received — clearing session');
           _clearSession();
         }
       }
@@ -51,6 +83,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const _clearSession = () => {
+    authLog('CLEAR SESSION called', { stack: new Error().stack?.split('\n')[2]?.trim() });
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');

@@ -38,6 +38,26 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const currentPath = window.location.pathname;
+      const hadToken = !!localStorage.getItem('token');
+
+      // Log to persistent storage so it survives the redirect
+      try {
+        const existing = JSON.parse(localStorage.getItem('_authLog') || '[]');
+        existing.push({
+          t: new Date().toISOString(),
+          msg: 'API 401 intercepted',
+          data: {
+            url: error.config?.url,
+            method: error.config?.method,
+            currentPath,
+            hadToken,
+            responseData: error.response?.data
+          }
+        });
+        localStorage.setItem('_authLog', JSON.stringify(existing));
+      } catch {}
+
+      console.warn('[API] 401 on', error.config?.url, '| hadToken:', hadToken, '| path:', currentPath);
 
       // Don't redirect if already on auth pages
       if (currentPath.match(/^\/(login|register)/)) {
@@ -45,12 +65,9 @@ api.interceptors.response.use(
       }
 
       // Only clear session and redirect if we actually had a token
-      // (i.e. the token expired or is invalid — not just an unauthenticated request)
-      const hadToken = !!localStorage.getItem('token');
       if (hadToken) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Use replace so the user can go back after re-login
         window.location.replace('/login');
       }
     }
