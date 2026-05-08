@@ -62,29 +62,25 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Get current task definition and update image to the new commit SHA tag
-          TASK_DEF_JSON=$(aws ecs describe-task-definition \
+          NEW_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "Deploying image: $NEW_IMAGE"
+
+          # Get current task definition, strip read-only fields, update image
+          aws ecs describe-task-definition \
             --task-definition $TASK_DEFINITION \
             --region $AWS_REGION \
             --query "taskDefinition" \
-            --output json)
+            --output json > /tmp/current-task-def.json
 
-          # Replace the image URI with the new commit-tagged image
-          NEW_TASK_DEF=$(echo $TASK_DEF_JSON | python3 -c "
-          import json, sys
-          td = json.load(sys.stdin)
-          for c in td['containerDefinitions']:
-              if c['name'] == 'backend':
-                  c['image'] = '$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG'
-          # Remove fields that can't be in register-task-definition
-          for f in ['taskDefinitionArn','revision','status','requiresAttributes','compatibilities','registeredAt','registeredBy']:
-              td.pop(f, None)
-          print(json.dumps(td))
-          ")
+          # Use jq to update the image and strip read-only fields
+          jq --arg IMAGE "$NEW_IMAGE" '
+            .containerDefinitions |= map(if .name == "backend" then .image = $IMAGE else . end) |
+            del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)
+          ' /tmp/current-task-def.json > /tmp/new-task-def.json
 
           # Register new task definition revision
-          NEW_REVISION=$(echo $NEW_TASK_DEF | aws ecs register-task-definition \
-            --cli-input-json file:///dev/stdin \
+          NEW_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json file:///tmp/new-task-def.json \
             --region $AWS_REGION \
             --query "taskDefinition.revision" \
             --output text)
