@@ -29,8 +29,8 @@ const MemeGallery = () => {
       console.log('📡 DEBUG: Starting fetchMemes...');
       setLoading(true);
       
-      console.log('📡 DEBUG: Making request to http://localhost:8080/api/memes');
-      const response = await fetch('http://localhost:8080/api/memes');
+      console.log('📡 DEBUG: Making request to /api/memes');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/memes`);
       
       console.log('📡 DEBUG: Response status:', response.status);
       console.log('📡 DEBUG: Response headers:', Object.fromEntries(response.headers.entries()));
@@ -77,13 +77,19 @@ const MemeGallery = () => {
     }
   };
 
-  // Handle voting - NO AUTHENTICATION REQUIRED
+  // Handle voting - requires authentication
   const handleVote = async (memeId, voteType) => {
+    if (!user) {
+      showNotification('Please log in to vote.', 'error');
+      return;
+    }
     try {
-      const response = await fetch(`http://localhost:8080/api/memes/${memeId}/vote`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/memes/${memeId}/vote`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ voteType })
       });
@@ -378,7 +384,7 @@ const MemeGallery = () => {
                       } else if (imageUrl.startsWith('http')) {
                         finalUrl = imageUrl;
                       } else {
-                        finalUrl = `http://localhost:8080${imageUrl}`;
+                        finalUrl = `${import.meta.env.VITE_API_URL || ''}${imageUrl}`;
                       }
                       
                       console.log(`🖼️ DEBUG: Image URL for "${meme.title}" (ID: ${meme.id}):`, {

@@ -59,7 +59,7 @@ const AvatarUploader = ({ stats, onUploaded }) => {
   };
 
   const avatarSrc = stats.avatarUrl
-    ? (stats.avatarUrl.startsWith('http') ? stats.avatarUrl : `http://localhost:8080${stats.avatarUrl}`)
+    ? (stats.avatarUrl.startsWith('http') ? stats.avatarUrl : `${import.meta.env.VITE_API_URL || ''}${stats.avatarUrl}`)
     : null;
 
   return (
@@ -105,7 +105,7 @@ const MemeThumb = ({ meme, rank }) => (
   <motion.div className="profile-meme-thumb" variants={itemVariants} whileHover={{ scale: 1.04 }}>
     {rank && <span className="thumb-rank">#{rank}</span>}
     <img
-      src={meme.imageUrl?.startsWith('http') ? meme.imageUrl : `http://localhost:8080${meme.imageUrl}`}
+      src={meme.imageUrl?.startsWith('http') ? meme.imageUrl : `${import.meta.env.VITE_API_URL || ''}${meme.imageUrl}`}
       alt={meme.title}
       onError={e => { e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwY2NmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }}
     />

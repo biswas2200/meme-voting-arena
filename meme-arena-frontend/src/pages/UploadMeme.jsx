@@ -151,9 +151,11 @@ const UploadMeme = () => {
       const token = localStorage.getItem('token');
       let response;
 
+      const apiBase = import.meta.env.VITE_API_URL || '';
+
       if (uploadMode === 'url') {
         // Submit URL-based meme
-        response = await fetch('http://localhost:8080/api/memes', {
+        response = await fetch(`${apiBase}/api/memes`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -167,7 +169,7 @@ const UploadMeme = () => {
         fileFormData.append('file', selectedFile);
         fileFormData.append('title', formData.title);
 
-        response = await fetch('http://localhost:8080/api/memes/upload', {
+        response = await fetch(`${apiBase}/api/memes/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`

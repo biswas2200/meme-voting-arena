@@ -58,7 +58,8 @@ const Leaderboard = () => {
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/memes/leaderboard');
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${apiBase}/api/memes/leaderboard`);
       if (response.ok) {
         const data = await response.json();
         setLeaderboardData(data);
