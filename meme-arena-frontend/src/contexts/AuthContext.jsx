@@ -10,51 +10,44 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]     = useState(null);
-  const [token, setToken]   = useState(() => localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
-
-  /* ── Restore session on mount ── */
-  useEffect(() => {
-    const initAuth = async () => {
+  // Initialize user synchronously from localStorage so route guards
+  // never see user=null on first render when a session exists.
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
       const savedToken = localStorage.getItem('token');
-      const savedUser  = localStorage.getItem('user');
+      if (savedToken && savedUser) return JSON.parse(savedUser);
+    } catch {}
+    return null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [loading, setLoading] = useState(false); // no longer needed to block render
 
-      if (savedToken && savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-          setToken(savedToken);
-        } catch {
+  /* ── Background token validation on mount ── */
+  useEffect(() => {
+    const validateToken = async () => {
+      const savedToken = localStorage.getItem('token');
+      if (!savedToken) return; // no session, nothing to validate
+
+      try {
+        const res = await api.get('/api/auth/profile', { timeout: 5000 });
+        const fresh = {
+          id:       res.data.id,
+          username: res.data.username,
+          email:    res.data.email,
+          role:     res.data.role
+        };
+        setUser(fresh);
+        localStorage.setItem('user', JSON.stringify(fresh));
+      } catch (err) {
+        // Only clear session on explicit 401 (token expired/invalid)
+        // Network errors, timeouts, 500s — keep the cached user
+        if (err.response?.status === 401) {
           _clearSession();
         }
       }
-
-      // Set loading false IMMEDIATELY — never block the UI waiting for the network.
-      // The profile refresh runs in the background after the app is already visible.
-      setLoading(false);
-
-      // Background token validation — only runs if we have a saved session
-      if (savedToken && savedUser) {
-        try {
-          const res = await api.get('/api/auth/profile', { timeout: 5000 });
-          const fresh = {
-            id:       res.data.id,
-            username: res.data.username,
-            email:    res.data.email,
-            role:     res.data.role
-          };
-          setUser(fresh);
-          localStorage.setItem('user', JSON.stringify(fresh));
-        } catch (err) {
-          // Only clear session on explicit 401 (token expired/invalid)
-          // Network errors, timeouts, 500s — keep the cached user
-          if (err.response?.status === 401) {
-            _clearSession();
-          }
-        }
-      }
     };
-    initAuth();
+    validateToken();
   }, []);
 
   const _clearSession = () => {
