@@ -49,6 +49,9 @@ public class MemeService {
     
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    private S3UploadService s3UploadService;
     
     public Page<MemeResponse> getAllMemes(int page, int size, Authentication authentication) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("voteCount").descending());
@@ -108,31 +111,35 @@ public class MemeService {
         }
         
         try {
-            // Create uploads directory if it doesn't exist
-            Path uploadDir = Paths.get("uploads");
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
+            String imageUrl;
+
+            if (s3UploadService.isEnabled()) {
+                // Upload to S3 — returns a permanent public HTTPS URL
+                imageUrl = s3UploadService.upload(file);
+            } else {
+                // Fallback: local disk (dev only — files lost on container restart)
+                Path uploadDir = Paths.get("uploads");
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+                String originalFilename = file.getOriginalFilename();
+                String fileExtension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String filename = UUID.randomUUID().toString() + fileExtension;
+                Path filePath = uploadDir.resolve(filename);
+                Files.copy(file.getInputStream(), filePath);
+                imageUrl = "/uploads/" + filename;
             }
-            
-            // Generate unique filename
-            String originalFilename = file.getOriginalFilename();
-            String fileExtension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String filename = UUID.randomUUID().toString() + fileExtension;
-            
-            // Save file
-            Path filePath = uploadDir.resolve(filename);
-            Files.copy(file.getInputStream(), filePath);
-            
-            // Create meme with file URL
+
+            // Create meme record with the resolved image URL
             Meme meme = new Meme();
             meme.setTitle(title);
-            meme.setImageUrl("/uploads/" + filename); // Relative URL for serving
+            meme.setImageUrl(imageUrl);
             meme.setUploadedBy(user);
             meme.setVoteCount(0);
-            
+
             Meme savedMeme = memeRepository.save(meme);
             return convertToMemeResponse(savedMeme, authentication);
             

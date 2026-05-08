@@ -12,6 +12,7 @@ env:
   TASK_DEFINITION: meme-arena-backend
   S3_BUCKET: meme-arena-frontend-562273658670
   CLOUDFRONT_ID: E331210BH0NF20
+  TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-south-1:562273658670:targetgroup/meme-arena-tg/02fea216f1f11ac5
 
 jobs:
   deploy-backend:
@@ -62,7 +63,69 @@ jobs:
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
             --force-new-deployment \
+            --load-balancers "targetGroupArn=$TARGET_GROUP_ARN,containerName=backend,containerPort=8080" \
             --region $AWS_REGION
+
+      - name: Wait for ECS deployment to stabilize
+        run: |
+          echo "Waiting for ECS service to stabilize..."
+          aws ecs wait services-stable \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --region $AWS_REGION
+          echo "ECS service is stable."
+
+      - name: Re-register new task IP with ALB target group
+        run: |
+          # Get the new running task ARN
+          TASK_ARN=$(aws ecs list-tasks \
+            --cluster $ECS_CLUSTER \
+            --service-name $ECS_SERVICE \
+            --region $AWS_REGION \
+            --query "taskArns[0]" --output text)
+          echo "Task ARN: $TASK_ARN"
+
+          # Get the private IP of the new task
+          NEW_IP=$(aws ecs describe-tasks \
+            --cluster $ECS_CLUSTER \
+            --tasks $TASK_ARN \
+            --region $AWS_REGION \
+            --query "tasks[0].attachments[0].details[?name=='privateIPv4Address'].value|[0]" \
+            --output text)
+          echo "New task IP: $NEW_IP"
+
+          # Deregister all old targets
+          OLD_TARGETS=$(aws elbv2 describe-target-health \
+            --target-group-arn $TARGET_GROUP_ARN \
+            --region $AWS_REGION \
+            --query "TargetHealthDescriptions[?TargetHealth.State!='draining'].Target.Id" \
+            --output text)
+          echo "Old targets: $OLD_TARGETS"
+
+          for OLD_IP in $OLD_TARGETS; do
+            if [ "$OLD_IP" != "$NEW_IP" ] && [ -n "$OLD_IP" ]; then
+              echo "Deregistering old IP: $OLD_IP"
+              aws elbv2 deregister-targets \
+                --target-group-arn $TARGET_GROUP_ARN \
+                --targets "Id=$OLD_IP,Port=8080" \
+                --region $AWS_REGION
+            fi
+          done
+
+          # Register the new task IP
+          echo "Registering new IP: $NEW_IP"
+          aws elbv2 register-targets \
+            --target-group-arn $TARGET_GROUP_ARN \
+            --targets "Id=$NEW_IP,Port=8080" \
+            --region $AWS_REGION
+
+          # Wait for healthy
+          echo "Waiting for target to become healthy..."
+          aws elbv2 wait target-in-service \
+            --target-group-arn $TARGET_GROUP_ARN \
+            --targets "Id=$NEW_IP,Port=8080" \
+            --region $AWS_REGION
+          echo "Target $NEW_IP is healthy. Deployment complete."
 
   deploy-frontend:
     name: Build & Deploy Frontend

@@ -387,11 +387,6 @@ const MemeGallery = () => {
                         finalUrl = `${import.meta.env.VITE_API_URL || ''}${imageUrl}`;
                       }
                       
-                      console.log(`🖼️ DEBUG: Image URL for "${meme.title}" (ID: ${meme.id}):`, {
-                        original: imageUrl,
-                        final: finalUrl
-                      });
-                      
                       return finalUrl;
                     })()}
                     alt={meme.title}
