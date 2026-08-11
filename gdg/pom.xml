@@ -102,13 +102,6 @@
 			<version>1.9.1</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- AWS S3 for file uploads -->
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>2.25.60</version>
-		</dependency>
 	</dependencies>
 
 	<build>

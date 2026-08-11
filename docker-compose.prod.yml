@@ -1,13 +1,11 @@
 # =============================================================
 # docker-compose.prod.yml — PRODUCTION REFERENCE
 #
-# This file is a reference for how the containers are configured
-# in production. On AWS you will NOT run docker-compose directly —
-# instead use ECS task definitions or ECR + ECS Fargate.
-#
-# This file is useful for:
-#   1. Smoke-testing the production image locally before pushing
-#   2. Documenting the expected env vars for ECS task definitions
+# Runs both containers with the 'prod' Spring profile and a
+# production-style frontend build, against an external Postgres
+# instance (not a local container) — for smoke-testing the
+# production images and documenting the expected env vars before
+# deploying them wherever you host the app.
 #
 # Usage (local smoke test only):
 #   cp .env.prod.example .env.prod
@@ -20,8 +18,7 @@
 services:
 
   # ── Spring Boot Backend ─────────────────────────────────────
-  # In production this runs on ECS Fargate.
-  # DATABASE_URL points to AWS RDS, not a local container.
+  # DATABASE_URL points to an external Postgres instance, not a local container.
   backend:
     build:
       context: ./gdg
@@ -40,6 +37,11 @@ services:
       PORT: 8080
     ports:
       - "8080:8080"
+    volumes:
+      # Meme images are stored on local disk — persist them across
+      # container restarts/redeploys. Mount this to durable storage
+      # on whatever host actually runs this in production.
+      - uploads_data:/app/uploads
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
       interval: 30s
@@ -48,7 +50,6 @@ services:
       start_period: 60s
 
   # ── React Frontend ───────────────────────────────────────────
-  # In production this is a static build deployed to S3 + CloudFront.
   # This service is here only for local smoke-testing the prod image.
   frontend:
     build:
@@ -63,3 +64,6 @@ services:
       - backend
     ports:
       - "3000:80"
+
+volumes:
+  uploads_data:

@@ -30,6 +30,7 @@ public class Meme {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploaded_by")
+    @JsonIgnore
     private User uploadedBy;
     
     @CreationTimestamp

@@ -8,7 +8,7 @@ Spring Boot backend for the Meme Voting Arena platform.
 - **Spring Security** — JWT authentication, role-based authorization
 - **Spring Data JPA** — ORM
 - **H2** — In-memory DB for development
-- **PostgreSQL** — Production DB (AWS RDS)
+- **PostgreSQL** — Production DB
 - **WebSocket / STOMP** — Real-time vote broadcasts
 - **Maven** — Build tool
 

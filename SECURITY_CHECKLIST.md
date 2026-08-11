@@ -62,7 +62,7 @@ Use this checklist before every production deployment. Check off each item manua
 - [ ] CSRF is disabled (stateless JWT API — correct for this architecture)
 - [ ] Session management is `STATELESS`
 - [ ] WebSocket endpoint `/ws/**` is permitted (required for STOMP connections)
-- [ ] Rate limiting is configured at the load balancer / API gateway level (AWS WAF, ALB rules, or similar)
+- [ ] Rate limiting is configured at the reverse proxy / API gateway level (or in-app, e.g. `bucket4j`)
 
 ---
 

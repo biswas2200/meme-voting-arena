@@ -111,7 +111,7 @@ public class SecurityConfig {
                 // Public Battle Arena endpoints
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/battle/tournaments").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/battle/tournaments/{id}").permitAll()
-                // Actuator health (for ALB health checks)
+                // Actuator health (for load balancer health checks)
                 .requestMatchers("/actuator/health").permitAll()
                 // Static file uploads
                 .requestMatchers("/uploads/**").permitAll()

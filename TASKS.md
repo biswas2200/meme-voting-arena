@@ -1,6 +1,6 @@
 # Meme Voting Arena — Production Readiness Tasks
 
-> **Deployment Target:** AWS (ECS/EC2 backend · RDS PostgreSQL · S3+CloudFront frontend)
+> **Deployment Target:** Docker (backend + PostgreSQL + nginx-served frontend, self-hosted)
 > **Status legend:** ✅ Done · 🔄 In Progress · ⬜ Pending
 
 ---
@@ -12,7 +12,7 @@
 | 0.1 | Remove Supabase integration (`application-supabase.properties` deleted, credentials purged) | ✅ |
 | 0.2 | Rewrite `application.properties` — default profile `dev`, all secrets via env vars | ✅ |
 | 0.3 | Rewrite `application-dev.properties` — clean H2 config, no hardcoded secrets | ✅ |
-| 0.4 | Rewrite `application-prod.properties` — AWS RDS PostgreSQL, all values from env vars | ✅ |
+| 0.4 | Rewrite `application-prod.properties` — production PostgreSQL, all values from env vars | ✅ |
 | 0.5 | Update Spring Boot `3.5.5` → `3.5.9` (latest stable 3.x) | ✅ |
 | 0.6 | Update jjwt `0.12.3` → `0.12.6` | ✅ |
 | 0.7 | Fix `MemeRepository` — replace MySQL `RAND()` with PostgreSQL `RANDOM()` | ✅ |
@@ -29,7 +29,7 @@
 | 1.3 | Restore real JWT auth in `AuthContext.jsx` — remove mock user, re-enable `Authorization` header | ⬜ |
 | 1.4 | Restore proper voting auth in `MemeService.voteMeme` — enforce one-vote-per-user via `VoteRepository` | ⬜ |
 | 1.5 | Restrict `SecurityConfig` — only public endpoints (`/api/auth/**`, `GET /api/memes`, `GET /api/memes/leaderboard`) should be permitAll | ⬜ |
-| 1.6 | Add rate limiting (Spring Boot `bucket4j` or AWS WAF) on auth endpoints | ⬜ |
+| 1.6 | Add rate limiting (Spring Boot `bucket4j` or a reverse-proxy rate limiter) on auth endpoints | ⬜ |
 | 1.7 | Enforce HTTPS-only CORS origins in prod (no `http://`) | ⬜ |
 | 1.8 | Add `@Valid` + input sanitisation on all controller endpoints | ⬜ |
 | 1.9 | Rotate default admin password — remove hardcoded `admin123` from `DataInitializer` | ⬜ |
@@ -43,11 +43,11 @@
 | 2.1 | Implement full Battle Arena logic — `GET /api/memes/battle` returns 2 random memes, `POST /api/memes/battle/{id}/vote` records battle vote | ⬜ |
 | 2.2 | Implement User Profile endpoint — `GET /api/auth/profile` returns uploaded memes, vote history, keyword | ⬜ |
 | 2.3 | Implement meme search endpoint — `GET /api/memes/search?q=` | ⬜ |
-| 2.4 | Replace local `uploads/` file storage with **AWS S3** (presigned URL upload flow) | ⬜ |
+| 2.4 | ~~Replace local `uploads/` file storage with cloud object storage~~ — dropped; local disk + Docker volume is the storage strategy | ✅ |
 | 2.5 | Add `GET /api/stats` endpoint for real homepage stats (total memes, users, votes) | ⬜ |
 | 2.6 | Wire WebSocket real-time vote updates end-to-end (backend already configured, frontend needs `useWebSocket` hook) | ⬜ |
 | 2.7 | Add pagination metadata to leaderboard (`GET /api/memes/leaderboard?page=&size=`) | ⬜ |
-| 2.8 | Add `spring-boot-starter-actuator` health endpoint for AWS ALB health checks | ⬜ |
+| 2.8 | Add `spring-boot-starter-actuator` health endpoint for load balancer health checks | ⬜ |
 
 ---
 
@@ -67,22 +67,18 @@
 
 ---
 
-## Phase 4 — AWS Infrastructure Setup ⬜
+## Phase 4 — Self-Hosted Deployment Setup ⬜
 
 | # | Task | Status |
 |---|------|--------|
-| 4.1 | Provision **AWS RDS** PostgreSQL instance (db.t3.micro, Multi-AZ for prod) | ⬜ |
-| 4.2 | Create **S3 bucket** for meme image uploads (private, CORS policy for frontend domain) | ⬜ |
-| 4.3 | Create **CloudFront** distribution in front of S3 for frontend CDN delivery | ⬜ |
-| 4.4 | Set up **ECR** repository and push backend Docker image | ⬜ |
-| 4.5 | Create **ECS Fargate** cluster + task definition + service for backend | ⬜ |
-| 4.6 | Configure **Application Load Balancer** (ALB) with HTTPS listener + ACM certificate | ⬜ |
-| 4.7 | Set up **VPC** with public/private subnets — backend in private subnet, RDS in isolated subnet | ⬜ |
-| 4.8 | Store all secrets in **AWS Secrets Manager** or **Parameter Store** (JWT_SECRET, DB creds) | ⬜ |
-| 4.9 | Configure **Security Groups** — ALB → ECS (8080), ECS → RDS (5432) only | ⬜ |
-| 4.10 | Deploy frontend to **S3 + CloudFront** (or AWS Amplify) | ⬜ |
-| 4.11 | Set up **Route 53** DNS records pointing to ALB and CloudFront | ⬜ |
-| 4.12 | Enable **CloudWatch** log groups for ECS task logs | ⬜ |
+| 4.1 | Provision a production PostgreSQL instance (managed or self-hosted) | ⬜ |
+| 4.2 | Provision a host to run `docker-compose.prod.yml` (VM, on-prem box, or any Docker-capable host) | ⬜ |
+| 4.3 | Put a reverse proxy / CDN in front of the frontend container for HTTPS termination and caching | ⬜ |
+| 4.4 | Configure a domain name and TLS certificate for the deployed app | ⬜ |
+| 4.5 | Ensure the `uploads_data` Docker volume is backed by durable, backed-up storage | ⬜ |
+| 4.6 | Store all secrets in whatever secret-management mechanism the hosting platform provides (JWT_SECRET, DB creds) — never hardcode them | ⬜ |
+| 4.7 | Restrict database network access to the backend container/network only | ⬜ |
+| 4.8 | Set up log aggregation for the backend container | ⬜ |
 
 ---
 
@@ -93,10 +89,10 @@
 | 5.1 | Create `Dockerfile` for Spring Boot backend (multi-stage build, non-root user) | ⬜ |
 | 5.2 | Create `Dockerfile` for React frontend (nginx-based, production build) | ⬜ |
 | 5.3 | Create `docker-compose.yml` for local full-stack development | ⬜ |
-| 5.4 | Set up **GitHub Actions** workflow — test → build → push to ECR → deploy to ECS | ⬜ |
-| 5.5 | Add frontend build + S3 sync step to CI/CD pipeline | ⬜ |
+| 5.4 | Set up a CI/CD pipeline — test → build → push image → deploy to the target host | ⬜ |
+| 5.5 | Add frontend build step to the CI/CD pipeline | ⬜ |
 | 5.6 | Add `mvn test` gate — block deploy on test failure | ⬜ |
-| 5.7 | Configure environment-specific GitHub Secrets (prod vs staging) | ⬜ |
+| 5.7 | Configure environment-specific CI secrets (prod vs staging) | ⬜ |
 
 ---
 
@@ -117,17 +113,17 @@
 | # | Task | Status |
 |---|------|--------|
 | 7.1 | Add structured JSON logging (Logback + `logstash-logback-encoder`) | ⬜ |
-| 7.2 | Integrate **AWS CloudWatch** metrics via Micrometer | ⬜ |
+| 7.2 | Integrate metrics collection via Micrometer (Prometheus, or another self-hosted backend) | ⬜ |
 | 7.3 | Add database query caching for leaderboard (`@Cacheable` + Redis or in-memory) | ⬜ |
 | 7.4 | Enable gzip compression on backend responses | ⬜ |
 | 7.5 | Add image lazy loading and skeleton loaders in frontend | ⬜ |
-| 7.6 | Set up **AWS CloudWatch Alarms** for error rate and latency thresholds | ⬜ |
+| 7.6 | Set up alerting for error rate and latency thresholds | ⬜ |
 
 ---
 
 ## Notes
 
-- **Never commit** `.env`, `application-prod.properties` with real values, or any AWS credentials.
-- All production secrets must live in **AWS Secrets Manager** and be injected as environment variables into ECS task definitions.
+- **Never commit** `.env`, `application-prod.properties` with real values, or any cloud/DB credentials.
+- All production secrets must be injected as environment variables at deploy time, never hardcoded into an image.
 - The `DataInitializer` component seeds sample data only when the `users` table is empty — add a profile guard (`@Profile("!prod")`) before going live.
 - `framer-motion` v12 recommends importing from `motion/react` instead of `framer-motion` — update imports when upgrading.
